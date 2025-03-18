@@ -1,16 +1,21 @@
-name: Test Self-Hosted Runner
+name: Deploy to AWS EC2 with Docker
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  test-runner:
+  deploy:
     runs-on: self-hosted
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Print System Info
-        run: uname -a
-
-      - name: List Files
-        run: ls -alh
+      - name: Build and Run Docker Container
+        run: |
+          docker stop my-app || true
+          docker rm my-app || true
+          docker build -t my-app .
+          docker run -d --name my-app -p 80:3000 my-app
