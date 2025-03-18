@@ -1,21 +1,36 @@
-name: Deploy to AWS EC2 with Docker
+name: Deploy to AWS EC2
 
 on:
   push:
     branches:
-      - main
+      - main  # Ensure this matches your branch
 
 jobs:
   deploy:
-    runs-on: self-hosted
-
+    runs-on: self-hosted  # Matches your EC2 runner label
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          sudo usermod -aG docker $USER
+
       - name: Build and Run Docker Container
         run: |
+          echo "Deploying Docker container on EC2 instance..."
+          
+          # Navigate to the correct directory
+          cd /home/ubuntu/actions-runner/_work/SE/SE  # Adjust if needed
+
+          # Stop and remove any existing container
           docker stop my-app || true
           docker rm my-app || true
+
+          # Build and run Docker container
           docker build -t my-app .
-          docker run -d --name my-app -p 80:3000 my-app
+          docker run -d --name my-app -p 80:80 my-app
