@@ -1,19 +1,16 @@
-name: Deploy to AWS EC2
+name: Test Self-Hosted Runner
 
-on:
-  push:
-    branches:
-      - main  # Change this if needed
+on: [push, pull_request]
 
 jobs:
-  deploy:
-    runs-on: self-hosted  # Use the runner from EC2
+  test-runner:
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Run Deployment Script
-        run: |
-          echo "Deploying on EC2 instance..."
-          # Add your deployment commands here
+      - name: Print System Info
+        run: uname -a
 
+      - name: List Files
+        run: ls -alh
