@@ -1,5 +1,4 @@
-Dockerfile
-CopyEdit
+
 # Use the official Nginx image
 FROM nginx:latest
 
