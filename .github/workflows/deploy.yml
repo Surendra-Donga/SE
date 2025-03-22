@@ -20,6 +20,8 @@ jobs:
         run: |
           docker stop my-html-container || true
           docker rm my-html-container || true
+          # Kill any process using port 80
+          sudo fuser -k 80/tcp || true
 
       - name: Run New Container
         run: docker run -d -p 80:80 --name my-html-container my-html-app
