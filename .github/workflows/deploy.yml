@@ -1,17 +1,27 @@
-- name: Build and Run Docker Container
-  run: |
-    echo "Deploying Docker container on EC2 instance..."
-    
-    cd /home/ubuntu/actions-runner/_work/SE/SE || exit 1
+yaml
+CopyEdit
+name: Deploy to AWS EC2
 
-    docker stop my-app || true
-    docker rm my-app || true
+on:
+push:
+branches:
+- main
 
-    # Ensure Dockerfile exists before building
-    if [ ! -f Dockerfile ]; then
-      echo "Error: Dockerfile not found!"
-      exit 1
-    fi
+jobs:
+deploy:
+runs-on: self-hosted # Using your EC2 as a self-hosted runner
 
-    docker build -t my-app .
-    docker run -d --name my-app -p 80:80 my-app
+steps:
+- name: Checkout Code
+uses: actions/checkout@v3
+
+- name: Build Docker Image
+run: docker build -t my-html-app .
+
+- name: Stop and Remove Old Container
+run: |
+docker stop my-html-container || true
+docker rm my-html-container || true
+
+- name: Run New Container
+run: docker run -d -p 80:80 --name my-html-container my-html-app
