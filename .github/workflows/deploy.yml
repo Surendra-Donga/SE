@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: self-hosted # Run tests on EC2
+    runs-on: self-hosted
 
     steps:
       - name: Checkout Code
@@ -15,31 +15,29 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd ~/your-project-folder
-          npm install  # For Node.js
-          # pip3 install -r requirements.txt  # Uncomment for Python
-          # mvn clean install  # Uncomment for Java
+          cd ~/actions-runner/_work/SE
+          npm install  # Change to pip install -r requirements.txt if using Python
+          # or mvn clean install if using Java
 
       - name: Run Unit Tests
         run: |
-          cd ~/your-project-folder
-          npm test  # Replace with pytest for Python or mvn test for Java
-
-      - name: Run Integration Tests
-        run: |
-          cd ~/your-project-folder
-          npm run test:integration  # Modify based on your framework
+          cd ~/actions-runner/_work/SE
+          npm test  # Change to pytest if using Python
+          # or mvn test if using Java
 
   deploy:
-    runs-on: self-hosted
-    needs: test  # Ensure tests pass before deployment
+    needs: test  # Runs only if the test job succeeds
+    runs-on: self-hosted  
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Move to Project Directory
+        run: cd ~/actions-runner/_work/SE
+
       - name: Build Docker Image
-        run: docker build -t my-html-app .
+        run: docker build -t my-html-app ~/actions-runner/_work/SE
 
       - name: Stop and Remove Old Container
         run: |
