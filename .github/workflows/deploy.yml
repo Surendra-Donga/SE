@@ -1,14 +1,38 @@
 name: Deploy to AWS EC2
 
-
 on:
   push:
     branches:
       - main
 
 jobs:
+  test:
+    runs-on: self-hosted # Run tests on EC2
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          cd ~/your-project-folder
+          npm install  # For Node.js
+          # pip3 install -r requirements.txt  # Uncomment for Python
+          # mvn clean install  # Uncomment for Java
+
+      - name: Run Unit Tests
+        run: |
+          cd ~/your-project-folder
+          npm test  # Replace with pytest for Python or mvn test for Java
+
+      - name: Run Integration Tests
+        run: |
+          cd ~/your-project-folder
+          npm run test:integration  # Modify based on your framework
+
   deploy:
-    runs-on: self-hosted  # Uses the EC2 runner
+    runs-on: self-hosted
+    needs: test  # Ensure tests pass before deployment
 
     steps:
       - name: Checkout Code
